@@ -1,5 +1,7 @@
 # Rebuilds index.json whenever a CSV is added, replaced or removed, and
-# commits it back. Pushes made with GITHUB_TOKEN do not re-trigger this
+# commits it back. A CSV uploaded to the repository root (the GitHub
+# upload page defaults there) is moved into sites/ first, so both upload
+# paths work. Pushes made with GITHUB_TOKEN do not re-trigger this
 # workflow, so the bot commit cannot loop. GitHub Pages redeploys on
 # every push to main (Settings -> Pages -> Deploy from a branch).
 name: Build index
@@ -9,6 +11,7 @@ on:
     branches: [main]
     paths:
       - "sites/**"
+      - "*.csv" # a CSV uploaded to the root is moved into sites/
       - "scripts/**"
       - ".github/workflows/build-index.yml"
   workflow_dispatch:
@@ -33,17 +36,20 @@ jobs:
         with:
           node-version: 22
 
+      - name: Move root-level CSVs into sites/
+        run: bash scripts/move-root-csvs.sh
+
       - name: Generate index.json
         run: node scripts/build-index.mjs
 
-      - name: Commit index.json
+      - name: Commit moved files and index.json
         run: |
-          if git diff --quiet -- index.json && [ -z "$(git ls-files --others --exclude-standard index.json)" ]; then
-            echo "index.json unchanged, nothing to commit"
+          git add -A -- sites index.json
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
             exit 0
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.json
-          git commit -m "chore: rebuild index.json"
+          git commit -m "chore: move uploaded CSVs into sites/ and rebuild index.json"
           git push

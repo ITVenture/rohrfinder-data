@@ -15,8 +15,9 @@ becomes a public URL and the site name shown in the app.
 1. Diesen Link öffnen — er führt direkt zur Upload-Seite des Ordners
    `sites`: <https://github.com/ITVenture/rohrfinder-data/upload/main/sites>
    (ohne Link: zuerst den Ordner `sites` anklicken, dann oben rechts
-   **Add file → Upload files**. Vom Hauptverzeichnis aus landet die
-   Datei sonst am falschen Ort und wird ignoriert.)
+   **Add file → Upload files**. Landet die Datei versehentlich im
+   Hauptverzeichnis, wird sie automatisch in den Ordner `sites`
+   verschoben.)
 2. Die CSV-Datei in das Feld ziehen oder über **choose your files**
    auswählen. Der Dateiname ist der Name der Baustelle in der App,
    z. B. `Lindenpark-B3.csv`. Erlaubt sind Buchstaben, Ziffern,
@@ -41,7 +42,10 @@ line, `code;length_mm;material;diameter`. Documented in
 ## How the index works
 
 `.github/workflows/build-index.yml` runs on every push that touches
-`sites/` and regenerates `index.json` with `scripts/build-index.mjs`:
+`sites/` or adds a CSV to the repository root. It first moves any
+root-level CSV into `sites/` (`scripts/move-root-csvs.sh`, extension
+normalized to lowercase, same-named file replaced), then regenerates
+`index.json` with `scripts/build-index.mjs`:
 
 ```json
 {
