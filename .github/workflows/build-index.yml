@@ -6,14 +6,12 @@
 # every push to main (Settings -> Pages -> Deploy from a branch).
 name: Build index
 
+# No path filter: filters are case-sensitive and an upload named
+# "Baustelle.CSV" in the root would not trigger. Runs on every push to
+# main instead; when there is nothing to move or rebuild it exits fast.
 on:
   push:
     branches: [main]
-    paths:
-      - "sites/**"
-      - "*.csv" # a CSV uploaded to the root is moved into sites/
-      - "scripts/**"
-      - ".github/workflows/build-index.yml"
   workflow_dispatch:
 
 permissions:
