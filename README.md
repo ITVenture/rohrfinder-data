@@ -12,11 +12,16 @@ becomes a public URL and the site name shown in the app.
 
 ## Anleitung (Deutsch)
 
-1. Oben rechts **Add file → Upload files** wählen.
-2. Die CSV-Datei in den Ordner `sites/` ziehen. Der Dateiname ist der
-   Name der Baustelle in der App, z. B. `Lindenpark-B3.csv`.
-   Erlaubt sind Buchstaben, Ziffern, Leerzeichen, Punkt, Unterstrich
-   und Bindestrich — keine Umlaute im Dateinamen.
+1. Diesen Link öffnen — er führt direkt zur Upload-Seite des Ordners
+   `sites`: <https://github.com/ITVenture/rohrfinder-data/upload/main/sites>
+   (ohne Link: zuerst den Ordner `sites` anklicken, dann oben rechts
+   **Add file → Upload files**. Vom Hauptverzeichnis aus landet die
+   Datei sonst am falschen Ort und wird ignoriert.)
+2. Die CSV-Datei in das Feld ziehen oder über **choose your files**
+   auswählen. Der Dateiname ist der Name der Baustelle in der App,
+   z. B. `Lindenpark-B3.csv`. Erlaubt sind Buchstaben, Ziffern,
+   Leerzeichen, Punkt, Unterstrich und Bindestrich — keine Umlaute im
+   Dateinamen.
 3. Unten **Commit changes** klicken.
 4. Nach etwa einer Minute erscheint die Baustelle in der App unter
    „Veröffentlichte Baustellen“. Auf dem Handy die App öffnen und die
