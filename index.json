@@ -1,0 +1,11 @@
+{
+  "generated": "2026-09-04T12:23:48.841Z",
+  "sites": [
+    {
+      "slug": "demo-baustelle",
+      "name": "Demo-Baustelle",
+      "file": "sites/Demo-Baustelle.csv",
+      "updated": "2026-09-04T12:23:48.841Z"
+    }
+  ]
+}

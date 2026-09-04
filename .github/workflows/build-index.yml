@@ -1,0 +1,49 @@
+# Rebuilds index.json whenever a CSV is added, replaced or removed, and
+# commits it back. Pushes made with GITHUB_TOKEN do not re-trigger this
+# workflow, so the bot commit cannot loop. GitHub Pages redeploys on
+# every push to main (Settings -> Pages -> Deploy from a branch).
+name: Build index
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "sites/**"
+      - "scripts/**"
+      - ".github/workflows/build-index.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-index
+  cancel-in-progress: false
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # per-file commit dates for "updated"
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Generate index.json
+        run: node scripts/build-index.mjs
+
+      - name: Commit index.json
+        run: |
+          if git diff --quiet -- index.json && [ -z "$(git ls-files --others --exclude-standard index.json)" ]; then
+            echo "index.json unchanged, nothing to commit"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.json
+          git commit -m "chore: rebuild index.json"
+          git push
