@@ -1,10 +1,11 @@
-# Rebuilds index.json whenever a CSV is added, replaced or removed, and
-# commits it back. A CSV uploaded to the repository root (the GitHub
-# upload page defaults there) is moved into sites/ first, so both upload
-# paths work. Pushes made with GITHUB_TOKEN do not re-trigger this
-# workflow, so the bot commit cannot loop. GitHub Pages redeploys on
-# every push to main (Settings -> Pages -> Deploy from a branch).
-name: Build index
+# On every push to main: move root-level CSV uploads into sites/,
+# rebuild index.json, commit both, then deploy sites/ + index.json to
+# GitHub Pages from this workflow. Pages source is "GitHub Actions"
+# (not "deploy from a branch"): a branch deploy raced with the bot
+# commit and the older build could overwrite the newer index. Pushes
+# made with GITHUB_TOKEN do not re-trigger this workflow, so the bot
+# commit cannot loop.
+name: Build index and deploy
 
 # No path filter: filters are case-sensitive and an upload named
 # "Baustelle.CSV" in the root would not trigger. Runs on every push to
@@ -16,6 +17,8 @@ on:
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: build-index
@@ -51,3 +54,28 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -m "chore: move uploaded CSVs into sites/ and rebuild index.json"
           git push
+
+      - name: Stage the published files
+        run: |
+          rm -rf _site
+          mkdir -p _site/sites
+          cp index.json _site/
+          cp sites/*.csv _site/sites/ 2>/dev/null || true
+          find _site -type f | sort
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+
+  deploy:
+    needs: index
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

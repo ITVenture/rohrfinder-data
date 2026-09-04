@@ -1,10 +1,11 @@
 # rohrfinder-data
 
 Published material lists for the [Rohr-Finder](https://github.com/ITVenture/rohrfinder)
-app. One CSV per construction site under `sites/`; GitHub Pages serves
-this branch as-is at `https://itventure.github.io/rohrfinder-data/`,
-and the app reads `index.json` to list the sites and fetch a list at
-`#/site/<slug>`. See ADR 0004 in the app repository for the design.
+app. One CSV per construction site under `sites/`; a workflow publishes
+`sites/` and `index.json` to GitHub Pages at
+`https://itventure.github.io/rohrfinder-data/`, and the app reads
+`index.json` to list the sites and fetch a list at `#/site/<slug>`. See
+ADR 0004 in the app repository for the design.
 
 Everything here is public. Lists contain pipe codes, lengths,
 materials and diameters only. Name the files neutrally: the file name
@@ -41,11 +42,12 @@ line, `code;length_mm;material;diameter`. Documented in
 
 ## How the index works
 
-`.github/workflows/build-index.yml` runs on every push that touches
-`sites/` or adds a CSV to the repository root. It first moves any
-root-level CSV into `sites/` (`scripts/move-root-csvs.sh`, extension
-normalized to lowercase, same-named file replaced), then regenerates
-`index.json` with `scripts/build-index.mjs`:
+`.github/workflows/build-index.yml` runs on every push to `main`. It
+first moves any root-level CSV into `sites/` (`scripts/move-root-csvs.sh`,
+extension normalized to lowercase, same-named file replaced), then
+regenerates `index.json` with `scripts/build-index.mjs`, commits both,
+and deploys `sites/` plus `index.json` to GitHub Pages from the same
+run, so a deployment always carries the index that matches its files:
 
 ```json
 {
