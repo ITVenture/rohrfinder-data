@@ -1,11 +1,17 @@
 {
-  "generated": "2026-09-04T13:38:54.199Z",
+  "generated": "2026-09-04T13:40:44.907Z",
   "sites": [
     {
       "slug": "demo-baustelle",
       "name": "Demo-Baustelle",
       "file": "sites/Demo-Baustelle.csv",
       "updated": "2026-09-04T14:23:48+02:00"
+    },
+    {
+      "slug": "testbaustelle-nord",
+      "name": "Testbaustelle-Nord",
+      "file": "sites/Testbaustelle-Nord.csv",
+      "updated": "2026-09-04T15:40:29+02:00"
     }
   ]
 }
